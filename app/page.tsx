@@ -251,19 +251,27 @@ export default function Home() {
   const currentReceipt = receipts.find((r) => r.id === currentReceiptId) ?? null
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) analyzeImage(file)
+    const files = Array.from(e.target.files ?? [])
+    if (files.length === 0) return
+    if (files.length > 8) {
+      alert("한 번에 최대 8장까지만 업로드할 수 있어요.")
+      e.target.value = ""
+      return
+    }
+    analyzeImages(files)
   }
 
   const handleCameraClick = () => fileInputRef.current?.click()
 
-  const analyzeImage = async (rawFile: File) => {
+  const analyzeImages = async (rawFiles: File[]) => {
     setIsAnalyzing(true)
     try {
       // 큰 갤러리 사진은 압축 (Vercel 4.5MB 제한 회피)
-      const file = await compressImage(rawFile).catch(() => rawFile)
+      const files = await Promise.all(
+        rawFiles.map((f) => compressImage(f).catch(() => f)),
+      )
       const form = new FormData()
-      form.append("image", file)
+      files.forEach((f) => form.append("image", f))
       const res = await fetch("/api/analyze", { method: "POST", body: form })
 
       if (!res.ok) {
@@ -479,6 +487,7 @@ export default function Home() {
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
+                multiple
                 onChange={handleFileSelect}
                 className="hidden"
               />
