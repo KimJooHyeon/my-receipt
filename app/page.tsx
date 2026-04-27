@@ -131,22 +131,31 @@ function defaultStoreName(d: Date, nickname?: string) {
 /** 사진을 업로드 가능한 크기로 압축. 큰 갤러리 사진(10MB+)도 1MB 내로. */
 async function compressImage(
   file: File,
-  maxDim = 1600,
-  quality = 0.85,
+  maxDim = 1280,
+  quality = 0.8,
 ): Promise<File> {
   // 작은 파일은 그대로 (불필요한 디코딩 비용 회피)
   if (file.size < 1_000_000) return file
 
-  const url = URL.createObjectURL(file)
+  // createImageBitmap이 Image.onload 보다 훨씬 빠름 (특히 12MP+ 사진)
+  let source: ImageBitmap | HTMLImageElement
+  let cleanup = () => {}
   try {
-    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    source = await createImageBitmap(file)
+  } catch {
+    // 폴백: createImageBitmap이 실패하면 Image 사용 (HEIC 등)
+    const url = URL.createObjectURL(file)
+    cleanup = () => URL.revokeObjectURL(url)
+    source = await new Promise<HTMLImageElement>((resolve, reject) => {
       const im = new Image()
       im.onload = () => resolve(im)
       im.onerror = () => reject(new Error("이미지를 읽을 수 없어요."))
       im.src = url
     })
+  }
 
-    let { width, height } = img
+  try {
+    let { width, height } = source as { width: number; height: number }
     if (width > maxDim || height > maxDim) {
       const scale = maxDim / Math.max(width, height)
       width = Math.round(width * scale)
@@ -158,7 +167,7 @@ async function compressImage(
     canvas.height = height
     const ctx = canvas.getContext("2d")
     if (!ctx) return file
-    ctx.drawImage(img, 0, 0, width, height)
+    ctx.drawImage(source as CanvasImageSource, 0, 0, width, height)
 
     const blob = await new Promise<Blob | null>((resolve) => {
       canvas.toBlob((b) => resolve(b), "image/jpeg", quality)
@@ -169,7 +178,8 @@ async function compressImage(
       type: "image/jpeg",
     })
   } finally {
-    URL.revokeObjectURL(url)
+    if ("close" in source) source.close()
+    cleanup()
   }
 }
 
