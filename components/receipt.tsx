@@ -181,7 +181,7 @@ export function Receipt({
           <div
             className="grid font-mono text-[10px] font-semibold tracking-widest text-muted-foreground pb-2 mb-2"
             style={{
-              gridTemplateColumns: "1fr 36px 64px 76px",
+              gridTemplateColumns: "1fr 32px 60px 72px",
               borderBottom: `1px solid ${RECEIPT_BORDER}`,
             }}
           >
@@ -196,12 +196,14 @@ export function Receipt({
             {items.map((item) => (
               <div
                 key={item.id}
-                className="grid font-mono text-[12px] py-1 px-1 text-foreground items-center"
+                className="grid font-mono text-[12px] py-1 px-1 text-foreground items-start"
                 style={{
-                  gridTemplateColumns: "1fr 36px 64px 76px",
+                  gridTemplateColumns: "1fr 32px 60px 72px",
                 }}
               >
-                <span className="truncate text-left pr-2">{item.name}</span>
+                <span className="line-clamp-2 leading-snug text-left pr-2 break-words">
+                  {item.name}
+                </span>
                 <span className="text-center text-muted-foreground">
                   {item.quantity}
                 </span>
