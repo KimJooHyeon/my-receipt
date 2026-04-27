@@ -15,7 +15,7 @@ import { NextRequest, NextResponse } from "next/server"
  * 키 발급: https://aistudio.google.com/apikey (무료 티어)
  */
 
-const HOURLY_LIMIT_PER_IP = 30
+const HOURLY_LIMIT_PER_IP = 100
 const HOUR_MS = 60 * 60 * 1000
 const MAX_IMAGES = 8
 
@@ -197,7 +197,16 @@ async function callGeminiOnce(images: ImagePart[]): Promise<DetectedItem[]> {
       )
       const violations =
         (quotaFailure?.violations as { quotaId?: string }[] | undefined) ?? []
-      isDailyLimit = violations.some((v) => v.quotaId?.includes("PerDay"))
+      const hasPerDay = violations.some((v) =>
+        v.quotaId?.includes("PerDay"),
+      )
+      const hasPerMinute = violations.some((v) =>
+        v.quotaId?.includes("PerMinute"),
+      )
+      // 진짜 일일 한도: PerDay만 있고 PerMinute 없음 OR retry가 5분 이상
+      // (Gemini는 분당 hit여도 응답에 PerDay까지 같이 나열하므로 retryDelay 함께 본다)
+      isDailyLimit =
+        (hasPerDay && !hasPerMinute) || retryMs > 5 * 60 * 1000
     } catch {
       // body parse 실패 — 기본값 사용
     }
