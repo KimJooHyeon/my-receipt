@@ -228,6 +228,12 @@ export default function Home() {
 
       const data = (await res.json()) as {
         items: { name: string; quantity: number; unitPrice: number }[]
+        empty?: boolean
+      }
+
+      if (data.empty || !data.items?.length) {
+        alert("사진에서 품목을 못 찾았어요. 다른 사진으로 시도해보세요.")
+        return
       }
 
       const now = new Date()
@@ -464,7 +470,7 @@ export default function Home() {
             <div className="px-6 pb-8">
               <h2 className="font-semibold text-foreground mb-4">최근 영수증</h2>
               {receipts.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-3 max-h-[55vh] overflow-y-auto pr-1 -mr-1">
                   {receipts.map((receipt) => (
                     <ReceiptThumbnail
                       key={receipt.id}

@@ -242,7 +242,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Mock 모드 (키 없을 때)
+    // Mock 모드 (키 없을 때 — 개발용)
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json({ items: MOCK_ITEMS, mock: true })
     }
@@ -252,22 +252,26 @@ export async function POST(req: NextRequest) {
     const items = await callGemini(base64, file.type || "image/jpeg")
 
     if (items.length === 0) {
-      // AI가 아무것도 못 찾으면 mock으로 폴백
-      return NextResponse.json({ items: MOCK_ITEMS, mock: true, empty: true })
+      // AI가 아무것도 못 찾음 — 빈 배열 반환 (mock 폴백 X)
+      return NextResponse.json({ items: [], empty: true })
     }
 
-    return NextResponse.json({ items, mock: false })
+    return NextResponse.json({ items })
   } catch (err) {
     console.error("analyze error:", err)
     const message = err instanceof Error ? err.message : "unknown"
-    // Rate limit은 정직하게 알려주기 (mock 폴백 X)
     if (err instanceof RateLimitError || message.includes("429")) {
       return NextResponse.json(
         { error: "rate_limited", message: "잠시 후 다시 시도해주세요." },
         { status: 429 },
       )
     }
-    // 그 외는 mock 폴백 (앱 멈추지 않게)
-    return NextResponse.json({ items: MOCK_ITEMS, mock: true, error: message })
+    return NextResponse.json(
+      {
+        error: "analyze_failed",
+        message: "분석에 실패했어요. 다시 시도해주세요.",
+      },
+      { status: 500 },
+    )
   }
 }
