@@ -286,14 +286,16 @@ export default function Home() {
   const handleShare = async (type: "image" | "link") => {
     if (!receiptCaptureRef.current || !currentReceipt) return
     try {
-      const { toPng } = await import("html-to-image")
-      const dataUrl = await toPng(receiptCaptureRef.current, {
+      const { toJpeg } = await import("html-to-image")
+      // 공유 호환성 위해 JPEG (작고 폭넓게 지원)
+      const dataUrl = await toJpeg(receiptCaptureRef.current, {
         cacheBust: true,
         pixelRatio: 2,
+        quality: 0.92,
         backgroundColor: "#FFFFFF",
       })
 
-      const filename = `receipt-${currentReceipt.id}.png`
+      const filename = `receipt-${currentReceipt.id}.jpg`
 
       if (type === "image") {
         const a = document.createElement("a")
@@ -304,20 +306,27 @@ export default function Home() {
       }
 
       const blob = await (await fetch(dataUrl)).blob()
-      const file = new File([blob], filename, { type: "image/png" })
+      const file = new File([blob], filename, { type: "image/jpeg" })
 
-      if (
+      const canShareFiles =
         typeof navigator !== "undefined" &&
         "canShare" in navigator &&
         navigator.canShare({ files: [file] })
-      ) {
+
+      if (canShareFiles) {
         try {
           await navigator.share({
             files: [file],
-            title: currentReceipt.storeName,
+            text: `나만의 영수증 — ${currentReceipt.storeName}`,
           })
-        } catch {
-          // 사용자 취소
+        } catch (err) {
+          // 사용자 취소(AbortError)는 정상, 그 외만 폴백
+          if ((err as Error)?.name !== "AbortError") {
+            const a = document.createElement("a")
+            a.download = filename
+            a.href = dataUrl
+            a.click()
+          }
         }
       } else {
         const a = document.createElement("a")
