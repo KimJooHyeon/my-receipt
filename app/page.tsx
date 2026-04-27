@@ -290,8 +290,8 @@ export default function Home() {
       // 공유 호환성 위해 JPEG (작고 폭넓게 지원)
       const dataUrl = await toJpeg(receiptCaptureRef.current, {
         cacheBust: true,
-        pixelRatio: 2,
-        quality: 0.92,
+        pixelRatio: 1.5,
+        quality: 0.88,
         backgroundColor: "#FFFFFF",
       })
 
@@ -419,7 +419,6 @@ export default function Home() {
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
-                capture="environment"
                 onChange={handleFileSelect}
                 className="hidden"
               />
