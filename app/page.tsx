@@ -128,6 +128,51 @@ function defaultStoreName(d: Date, nickname?: string) {
   return nickname ? `${nickname}의 ${dateStr}` : dateStr
 }
 
+/** 사진을 업로드 가능한 크기로 압축. 큰 갤러리 사진(10MB+)도 1MB 내로. */
+async function compressImage(
+  file: File,
+  maxDim = 1600,
+  quality = 0.85,
+): Promise<File> {
+  // 작은 파일은 그대로 (불필요한 디코딩 비용 회피)
+  if (file.size < 1_000_000) return file
+
+  const url = URL.createObjectURL(file)
+  try {
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const im = new Image()
+      im.onload = () => resolve(im)
+      im.onerror = () => reject(new Error("이미지를 읽을 수 없어요."))
+      im.src = url
+    })
+
+    let { width, height } = img
+    if (width > maxDim || height > maxDim) {
+      const scale = maxDim / Math.max(width, height)
+      width = Math.round(width * scale)
+      height = Math.round(height * scale)
+    }
+
+    const canvas = document.createElement("canvas")
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return file
+    ctx.drawImage(img, 0, 0, width, height)
+
+    const blob = await new Promise<Blob | null>((resolve) => {
+      canvas.toBlob((b) => resolve(b), "image/jpeg", quality)
+    })
+    if (!blob) return file
+
+    return new File([blob], file.name.replace(/\.[^.]+$/, ".jpg"), {
+      type: "image/jpeg",
+    })
+  } finally {
+    URL.revokeObjectURL(url)
+  }
+}
+
 export default function Home() {
   const [view, setView] = useState<"main" | "result">("main")
   const [currentReceiptId, setCurrentReceiptId] = useState<string | null>(null)
@@ -202,9 +247,11 @@ export default function Home() {
 
   const handleCameraClick = () => fileInputRef.current?.click()
 
-  const analyzeImage = async (file: File) => {
+  const analyzeImage = async (rawFile: File) => {
     setIsAnalyzing(true)
     try {
+      // 큰 갤러리 사진은 압축 (Vercel 4.5MB 제한 회피)
+      const file = await compressImage(rawFile).catch(() => rawFile)
       const form = new FormData()
       form.append("image", file)
       const res = await fetch("/api/analyze", { method: "POST", body: form })
