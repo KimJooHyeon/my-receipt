@@ -365,7 +365,7 @@ export default function Home() {
                 나만의 영수증
               </h1>
               <p className="text-sm text-muted-foreground text-center mt-2">
-                사진을 올리면 AI가 영수증을 만들어드려요
+                사진을 올리면 영수증을 만들어드려요
               </p>
               <div className="flex justify-center mt-3">
                 <input
@@ -422,9 +422,9 @@ export default function Home() {
                     <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin" />
                   </div>
                   <div className="text-center">
-                    <p className="font-semibold text-foreground">AI가 분석 중이에요</p>
+                    <p className="font-semibold text-foreground">영수증 만드는 중...</p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      잠시만 기다려주세요...
+                      잠시만 기다려주세요
                     </p>
                   </div>
                 </div>

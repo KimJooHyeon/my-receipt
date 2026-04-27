@@ -66,10 +66,10 @@ export function ReceiptThumbnail({
             e.stopPropagation()
             onDelete()
           }}
-          className="absolute top-2 right-2 p-1.5 rounded-full bg-card border border-border text-muted-foreground hover:text-destructive hover:border-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute top-2 right-2 p-2 rounded-full bg-card/80 backdrop-blur-sm border border-border/60 text-muted-foreground/50 hover:text-destructive hover:border-destructive transition-colors"
           aria-label="영수증 삭제"
         >
-          <X size={14} />
+          <X size={12} />
         </button>
       )}
     </div>

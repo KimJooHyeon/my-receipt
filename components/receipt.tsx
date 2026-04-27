@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { Pencil } from "lucide-react"
 
 export interface ReceiptItem {
   id: string
@@ -160,9 +161,10 @@ export function Receipt({
             ) : (
               <button
                 onClick={startTitleEdit}
-                className="font-mono text-lg font-bold text-foreground tracking-wide hover:opacity-60 transition-opacity"
+                className="inline-flex items-center gap-2 font-mono text-lg font-bold text-foreground tracking-wide hover:opacity-60 transition-opacity"
               >
                 {storeName}
+                <Pencil size={12} className="text-muted-foreground/50" strokeWidth={1.8} />
               </button>
             )}
             <p className="font-mono text-[11px] text-muted-foreground mt-1.5 tracking-wider">
@@ -255,9 +257,10 @@ export function Receipt({
             ) : (
               <button
                 onClick={startTaglineEdit}
-                className="font-mono text-xs text-foreground/80 hover:opacity-60 transition-opacity tracking-wide"
+                className="inline-flex items-center gap-1.5 font-mono text-xs text-foreground/80 hover:opacity-60 transition-opacity tracking-wide"
               >
                 {tagline}
+                <Pencil size={10} className="text-muted-foreground/50" strokeWidth={1.8} />
               </button>
             )}
           </div>
