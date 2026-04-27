@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { X } from "lucide-react"
 
 export interface ReceiptItem {
   id: string
@@ -21,15 +20,14 @@ interface ReceiptProps {
   receiptNumber: string
   approvalCode: string
   captureRef?: React.Ref<HTMLDivElement>
-  onItemDelete?: (id: string) => void
   onStoreNameUpdate?: (name: string) => void
   onTaglineUpdate?: (tagline: string) => void
   onShare?: (type: "image" | "link") => void
   onBack?: () => void
 }
 
-const RECEIPT_BG = "#FFFFFF"
-const RECEIPT_BORDER = "#EAECEE"
+const RECEIPT_BG = "#F7F8F9"
+const RECEIPT_BORDER = "#E5E8EB"
 const ZIGZAG_HEIGHT = 12
 const ZIGZAG_TEETH = 22
 const VIEWBOX_WIDTH = 100
@@ -98,7 +96,6 @@ export function Receipt({
   receiptNumber,
   approvalCode,
   captureRef,
-  onItemDelete,
   onStoreNameUpdate,
   onTaglineUpdate,
   onShare,
@@ -181,42 +178,32 @@ export function Receipt({
               borderBottom: `1px solid ${RECEIPT_BORDER}`,
             }}
           >
-            <span>품목</span>
-            <span className="text-center">수량</span>
-            <span className="text-right">단가</span>
-            <span className="text-right">금액</span>
+            <span>ITEM</span>
+            <span className="text-center">QTY</span>
+            <span className="text-right">UNIT</span>
+            <span className="text-right">AMOUNT</span>
           </div>
 
           {/* 항목 리스트 (read-only) */}
           <div className="space-y-1.5 mb-3">
             {items.map((item) => (
-              <div key={item.id} className="flex items-center group">
-                <div
-                  className="flex-1 grid font-mono text-[12px] py-1 px-1 text-foreground items-center"
-                  style={{
-                    gridTemplateColumns: "1fr 36px 64px 76px",
-                  }}
-                >
-                  <span className="truncate text-left pr-2">{item.name}</span>
-                  <span className="text-center text-muted-foreground">
-                    {item.quantity}
-                  </span>
-                  <span className="text-right text-muted-foreground">
-                    {fmt(item.unitPrice)}
-                  </span>
-                  <span className="text-right tracking-wider">
-                    {fmt(item.quantity * item.unitPrice)}
-                  </span>
-                </div>
-                {onItemDelete && (
-                  <button
-                    onClick={() => onItemDelete(item.id)}
-                    className="ml-1 p-1 text-muted-foreground hover:text-destructive rounded transition-colors opacity-0 group-hover:opacity-100"
-                    aria-label="삭제"
-                  >
-                    <X size={14} />
-                  </button>
-                )}
+              <div
+                key={item.id}
+                className="grid font-mono text-[12px] py-1 px-1 text-foreground items-center"
+                style={{
+                  gridTemplateColumns: "1fr 36px 64px 76px",
+                }}
+              >
+                <span className="truncate text-left pr-2">{item.name}</span>
+                <span className="text-center text-muted-foreground">
+                  {item.quantity}
+                </span>
+                <span className="text-right text-muted-foreground">
+                  {fmt(item.unitPrice)}
+                </span>
+                <span className="text-right tracking-wider">
+                  {fmt(item.quantity * item.unitPrice)}
+                </span>
               </div>
             ))}
           </div>

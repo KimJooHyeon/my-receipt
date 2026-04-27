@@ -268,13 +268,6 @@ export default function Home() {
     )
   }
 
-  const handleItemDelete = (id: string) => {
-    if (!currentReceipt) return
-    updateCurrent({
-      items: currentReceipt.items.filter((item) => item.id !== id),
-    })
-  }
-
   const handleStoreNameUpdate = (name: string) => {
     updateCurrent({ storeName: name })
   }
@@ -505,7 +498,6 @@ export default function Home() {
                 receiptNumber={currentReceipt.receiptNumber}
                 approvalCode={currentReceipt.approvalCode}
                 captureRef={receiptCaptureRef}
-                onItemDelete={handleItemDelete}
                 onStoreNameUpdate={handleStoreNameUpdate}
                 onTaglineUpdate={handleTaglineUpdate}
                 onShare={handleShare}
