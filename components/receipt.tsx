@@ -136,7 +136,7 @@ export function Receipt({
   return (
     <div className="w-full max-w-[360px] mx-auto">
       {/* 영수증 */}
-      <div ref={captureRef} className="drop-shadow-[0_4px_16px_rgba(0,0,0,0.06)]">
+      <div ref={captureRef}>
         <ZigzagEdge side="top" />
 
         <div
