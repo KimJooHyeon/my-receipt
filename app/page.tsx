@@ -286,6 +286,10 @@ export default function Home() {
         pixelRatio: 1.5,
         quality: 0.88,
         backgroundColor: "#FFFFFF",
+        // data-capture-hide 속성이 있는 노드는 이미지에서 제외 (편집 아이콘 등)
+        filter: (node) =>
+          !(node instanceof HTMLElement || node instanceof SVGElement) ||
+          !node.hasAttribute("data-capture-hide"),
       })
 
       const filename = `receipt-${currentReceipt.id}.jpg`
@@ -461,7 +465,7 @@ export default function Home() {
               <h2 className="font-semibold text-foreground mb-4">최근 영수증</h2>
               {receipts.length > 0 ? (
                 <div className="space-y-3">
-                  {receipts.slice(0, 5).map((receipt) => (
+                  {receipts.map((receipt) => (
                     <ReceiptThumbnail
                       key={receipt.id}
                       storeName={receipt.storeName}

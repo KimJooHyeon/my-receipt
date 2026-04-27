@@ -164,7 +164,12 @@ export function Receipt({
                 className="inline-flex items-center gap-2 font-mono text-lg font-bold text-foreground tracking-wide hover:opacity-60 transition-opacity"
               >
                 {storeName}
-                <Pencil size={12} className="text-muted-foreground/50" strokeWidth={1.8} />
+                <Pencil
+                  size={12}
+                  className="text-muted-foreground/50"
+                  strokeWidth={1.8}
+                  data-capture-hide
+                />
               </button>
             )}
             <p className="font-mono text-[11px] text-muted-foreground mt-1.5 tracking-wider">
@@ -260,7 +265,12 @@ export function Receipt({
                 className="inline-flex items-center gap-1.5 font-mono text-xs text-foreground/80 hover:opacity-60 transition-opacity tracking-wide"
               >
                 {tagline}
-                <Pencil size={10} className="text-muted-foreground/50" strokeWidth={1.8} />
+                <Pencil
+                  size={10}
+                  className="text-muted-foreground/50"
+                  strokeWidth={1.8}
+                  data-capture-hide
+                />
               </button>
             )}
           </div>
