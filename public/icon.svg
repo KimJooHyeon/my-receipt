@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#191F28"/>
+  <g fill="#F7F8F9">
+    <!-- 영수증 본체 (지그재그 위/아래) -->
+    <path d="M128 132 L128 132 L160 116 L192 132 L224 116 L256 132 L288 116 L320 132 L352 116 L384 132 L384 380 L352 396 L320 380 L288 396 L256 380 L224 396 L192 380 L160 396 L128 380 Z"/>
+  </g>
+  <g fill="#191F28" font-family="ui-monospace, SFMono-Regular, monospace" font-weight="700">
+    <text x="256" y="220" text-anchor="middle" font-size="32" letter-spacing="2">ITEM</text>
+    <rect x="160" y="240" width="192" height="2"/>
+    <text x="256" y="290" text-anchor="middle" font-size="84">₩</text>
+    <rect x="160" y="320" width="192" height="2"/>
+    <text x="256" y="356" text-anchor="middle" font-size="20" letter-spacing="3">TOTAL</text>
+  </g>
+</svg>
